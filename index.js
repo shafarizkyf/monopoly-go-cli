@@ -8,6 +8,7 @@ const play = async () => {
     currency: 0,
     play_count: INIT_PLAY_COUNT,
     last_play: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    last_position: 0,
   };
 
   // set current profile either from existing profile or initialize when doesnt exist
@@ -21,11 +22,17 @@ const play = async () => {
   }
 
   // get user step and current block
-  const step = countStep();
+  const step = currentProfile.last_position + countStep();
   const currentBlock = MAP[step % MAP.length];
 
   // update user profile data
   currentProfile.currency += currentBlock.amount;
+  currentProfile.last_position = step;
+
+  if (currentProfile.currency < 0) {
+    currentProfile.currency = 0;
+  }
+
   currentProfile.play_count -= 1;
   currentProfile.last_play = dayjs().format('YYYY-MM-DD HH:mm:ss');
 

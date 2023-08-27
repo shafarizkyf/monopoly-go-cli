@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 
 export const INIT_PLAY_COUNT = 30; // initial playable limitation when first play
 const GENERATE_PLAY_COUNT_TIME = 1; // in minute
+const MAX_PLAY = 30;
 
 const DICE_SIDE_MIN = 1
 const DICE_SIDE_MAX = 6;
@@ -29,5 +30,10 @@ export const generatePlayableDiceByTime = (currentProfile) => {
   const playableAmount = Math.round(today.diff(lastPlay, 'minute') / GENERATE_PLAY_COUNT_TIME);
 
   currentProfile.play_count += playableAmount;
+
+  if (currentProfile.play_count >= MAX_PLAY) {
+    currentProfile.play_count = MAX_PLAY;
+  }
+
   return currentProfile;
 }
