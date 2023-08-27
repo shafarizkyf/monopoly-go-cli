@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 
 export const INIT_PLAY_COUNT = 30; // initial playable limitation when first play
+export const CHANCE_DICE = 3; // free dice when player stop on "chance" block
 const GENERATE_PLAY_COUNT_TIME = 1; // in minute
 const MAX_PLAY = 30;
 

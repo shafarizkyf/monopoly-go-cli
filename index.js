@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { INIT_PLAY_COUNT, countStep, generatePlayableDiceByTime } from "./src/dice.js";
+import { CHANCE_DICE, INIT_PLAY_COUNT, countStep, generatePlayableDiceByTime } from "./src/dice.js";
 import { MAP } from "./src/map.js";
 import { loadProfile, updateProfile } from "./src/profile.js";
 
@@ -34,6 +34,11 @@ const play = async () => {
   }
 
   currentProfile.play_count -= 1;
+
+  if (currentBlock.name === 'chance') {
+    currentProfile.play_count += CHANCE_DICE;
+  }
+
   currentProfile.last_play = dayjs().format('YYYY-MM-DD HH:mm:ss');
 
   updateProfile(currentProfile)
