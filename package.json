@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@inquirer/prompts": "^3.0.4",
     "dayjs": "^1.11.8",
     "fs": "^0.0.1-security",
     "path": "^0.12.7",

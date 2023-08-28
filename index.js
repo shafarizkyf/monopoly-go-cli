@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
-import { CHANCE_DICE, INIT_PLAY_COUNT, countStep, generatePlayableDiceByTime } from "./src/dice.js";
-import { MAP } from "./src/map.js";
-import { loadProfile, updateProfile } from "./src/profile.js";
+import { INIT_PLAY_COUNT, generatePlayableDiceByTime } from "./src/dice.js";
+import { loadProfile } from "./src/profile.js";
+import { select } from "@inquirer/prompts";
+import action, { throwDice } from "./src/action.js";
 
 const play = async () => {
   const INIT_PROFILE = {
@@ -21,29 +22,39 @@ const play = async () => {
     return;
   }
 
-  // get user step and current block
-  const step = currentProfile.last_position + countStep();
-  const currentBlock = MAP[step % MAP.length];
+  let isExit = false;
+  while (!isExit) {
+    const answer = await select({
+      message: 'Select Action',
+      choices: [
+        {
+          name: 'Throw Dice',
+          value: action.THROW_DICE
+        },
+        {
+          name: 'Make Building',
+          value: action.MAKE_BUILDING
+        },
+        {
+          name: 'Exit',
+          value: action.EXIT
+        }
+      ]
+    });
 
-  // update user profile data
-  currentProfile.currency += currentBlock.amount;
-  currentProfile.last_position = step;
+    switch (answer) {
+      case action.THROW_DICE:
+        throwDice(currentProfile);
+        break;
 
-  if (currentProfile.currency < 0) {
-    currentProfile.currency = 0;
+      case action.EXIT:
+        isExit = true;
+        break;
+
+      default:
+        isExit = true;
+    }
   }
-
-  currentProfile.play_count -= 1;
-
-  if (currentBlock.name === 'chance') {
-    currentProfile.play_count += CHANCE_DICE;
-  }
-
-  currentProfile.last_play = dayjs().format('YYYY-MM-DD HH:mm:ss');
-
-  updateProfile(currentProfile)
-
-  console.table({ step: step % MAP.length, currentBlock, currentProfile });
 }
 
 play();
