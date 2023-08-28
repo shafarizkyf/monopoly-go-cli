@@ -9,8 +9,12 @@ const PROFILE_PATH = `${__dirname}/../profile.json`;
 
 export const loadProfile = () => {
   try {
-    const data = fs.readFileSync(PROFILE_PATH, 'utf8');
-    return JSON.parse(data);
+    const isExist = fs.existsSync(PROFILE_PATH);
+    if (isExist) {
+      const data = fs.readFileSync(PROFILE_PATH, 'utf8');
+      return JSON.parse(data);
+    }
+    return null;
   } catch (error) {
     console.log('error while loading profile: ', error);
     return null;
