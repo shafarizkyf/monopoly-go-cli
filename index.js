@@ -2,7 +2,8 @@ import dayjs from "dayjs";
 import { INIT_PLAY_COUNT, generatePlayableDiceByTime } from "./src/dice.js";
 import { loadProfile } from "./src/profile.js";
 import { select } from "@inquirer/prompts";
-import action, { throwDice } from "./src/action.js";
+import action, { selectBuilding, throwDice } from "./src/action.js";
+import level from "./src/level.js";
 
 const play = async () => {
   const INIT_PROFILE = {
@@ -10,10 +11,12 @@ const play = async () => {
     play_count: INIT_PLAY_COUNT,
     last_play: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     last_position: 0,
+    level: 1
   };
 
   // set current profile either from existing profile or initialize when doesnt exist
-  const currentProfile = loadProfile() || INIT_PROFILE;
+  const currentProfile = await loadProfile() || INIT_PROFILE;
+  const currentLevel = level.find((town) => town.level == currentProfile.level);
 
   generatePlayableDiceByTime(currentProfile)
 
@@ -45,6 +48,10 @@ const play = async () => {
     switch (answer) {
       case action.THROW_DICE:
         throwDice(currentProfile);
+        break;
+
+      case action.MAKE_BUILDING:
+        await selectBuilding(currentProfile, currentLevel);
         break;
 
       case action.EXIT:

@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { MAP } from "./map.js";
 import { countStep } from "./dice.js";
 import { updateProfile } from "./profile.js";
+import { select } from "@inquirer/prompts";
 
 export default {
   EXIT: 'exit',
@@ -34,4 +35,39 @@ export const throwDice = (currentProfile) => {
   updateProfile(currentProfile)
 
   console.table({ step: step % MAP.length, currentBlock, currentProfile });
+}
+
+export const selectBuilding = async (currentProfile, currentLevel) => {
+  const choices = currentLevel.buildings.map((building) => {
+    return {
+      name: building.name,
+      value: building
+    }
+  });
+
+  const building = await select({
+    message: 'Choose Building',
+    choices
+  });
+
+  const upgradeChoices = building.upgrades.map((upgrade) => {
+    return {
+      name: `${upgrade.name} (${upgrade.cost})`,
+      value: upgrade.cost
+    }
+  });
+
+  const upgradeCost = await select({
+    message: 'Choose Upgrade',
+    choices: upgradeChoices
+  });
+
+  if (currentProfile.currency < upgradeCost) {
+    console.log('You don\'t have enough resource');
+    return;
+  }
+
+  currentProfile.currency -= upgradeCost;
+  console.log('Current $: ', currentProfile.currency);
+  updateProfile(currentProfile)
 }
